@@ -3,16 +3,16 @@ import React from "react";
 import { useState } from "react";
 
 const LeftNavigatioMenu: React.FC = () => {
-  const [openNavigation, setOpenNavigation] = useState(false);
+  const [openNavigation, setOpenNavigation] = useState(true);
 
   const handleNavigation = () => {
     setOpenNavigation(!openNavigation);
   };
 
   return (
-    <div>
+    <>
       <div
-        className="text-black ml-7 mt-7 w-11 h-11 rounded-xl bg-white flex items-center justify-center hover:cursor-pointer hover:bg-gray-100 shadow-md"
+        className="text-black absolute top-7 left-7 w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center hover:cursor-pointer hover:bg-gray-200 shadow-lg"
         onClick={handleNavigation}
       >
         <svg
@@ -37,7 +37,7 @@ const LeftNavigatioMenu: React.FC = () => {
       )}
 
       <div
-        className={`absolute h-screen w-72 bg-slate-50 shadow-lg left-0 top-0 transition-transform ease-in-out duration-300 ${
+        className={`absolute h-screen w-72 bg-gray-100 shadow-lg left-0 top-0 transition-transform ease-in-out duration-300 ${
           openNavigation ? "-translate-x-full" : "translate-x-0"
         }`}
       >
@@ -87,7 +87,7 @@ const LeftNavigatioMenu: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 
