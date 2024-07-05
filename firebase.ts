@@ -11,6 +11,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
+//KEYS
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCooj-obyxipzAjr74KSB1ryws79l7X3Mk",
+//   authDomain: "realtimecongestionsystem.firebaseapp.com",
+//   projectId: "realtimecongestionsystem",
+//   storageBucket: "realtimecongestionsystem.appspot.com",
+//   messagingSenderId: "1056763868419",
+//   appId: "1:1056763868419:web:b9a4b5199b375e9e7e2536",
+// };
+
 if (!getApps().length) {
   initializeApp(firebaseConfig);
 }

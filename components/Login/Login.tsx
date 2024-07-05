@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from "react";
+import { auth, googleAuthProvider } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
 
 const Login: React.FC = () => {
   const [showLogin, setShowLogin] = useState<boolean>(false);
@@ -13,6 +15,15 @@ const Login: React.FC = () => {
   //handle close login
   const handleShowHelp = () => {
     setShowHelp(!showHelp);
+  };
+
+  //handle sign in with google
+  const handleSignInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleAuthProvider);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -107,11 +118,19 @@ const Login: React.FC = () => {
                     <label>forgot your password ?</label>
                   </div>
                 </div>
+                <div className="flex justify-center mt-16">
+                  <button
+                    className="w-44 h-12 border border-gray-200 hover:bg-gray-200 shadow-md rounded-md"
+                    onClick={handleSignInWithGoogle}
+                  >
+                    Sign in with Google
+                  </button>
+                </div>
                 <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex justify-center">
                   <div className="text-gray-500 text-xs">
                     <label>
                       This site is protected by reCAPCHA and GOOGLE{" "}
-                      <text className="text-blue-600">privacy policy</text> .
+                      <label className="text-blue-600">privacy policy</label> .
                     </label>
                   </div>
                 </div>
