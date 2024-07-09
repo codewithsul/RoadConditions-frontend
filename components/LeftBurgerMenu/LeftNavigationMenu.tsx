@@ -1,16 +1,42 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const LeftNavigatioMenu: React.FC = () => {
-  const [openNavigation, setOpenNavigation] = useState(true);
+  const [openNavigation, setOpenNavigation] = useState<boolean>(true);
+  const [signInToShowPages, setSignInToShowPages] = useState<boolean>(false);
+  const [Logged, setLogged] = useState<boolean>(false);
+  const [Origin, setOrigin] = useState<string>("");
+  const [Destination, setDestination] = useState<string>("");
+
+  console.log("origin:", Origin);
+  console.log("destination:", Destination);
 
   const handleNavigation = () => {
     setOpenNavigation(!openNavigation);
   };
 
+  const handlesignInToShowPages = () => {
+    setSignInToShowPages(true);
+  };
+
+  const handleToastError = () => {
+    if (Logged === false) {
+      toast.error("please log in in to access this feature");
+    }
+  };
+
+  const handleOriginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOrigin(e.target.value);
+  };
+
+  const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDestination(e.target.value);
+  };
+
   return (
-    <>
+    <div>
       <div
         className="text-black absolute top-7 left-7 w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center hover:cursor-pointer hover:bg-gray-200 shadow-lg"
         onClick={handleNavigation}
@@ -28,6 +54,45 @@ const LeftNavigatioMenu: React.FC = () => {
           />
         </svg>
       </div>
+      <div className="w-96 h-52 rounded-lg bg-gray-100 shadow-lg absolute top-7 left-20 flex flex-col items-center">
+        <label className="w-full flex justify-center font-bold text-lg mt-2">
+          Route Directions
+        </label>
+        <input
+          type="text"
+          className="w-10/12 h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border"
+          placeholder="Choose starting point"
+          onClick={handlesignInToShowPages}
+          onChange={handleOriginChange}
+        />
+        <input
+          type="text"
+          className="w-10/12 h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border"
+          placeholder="Choose destination"
+          onClick={handlesignInToShowPages}
+          onChange={handleDestinationChange}
+        />
+      </div>
+      {signInToShowPages && (
+        <div className="w-96 h-14 rounded-lg bg-gray-100 shadow-lg absolute left-20 top-60 flex flex-row items-center gap-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="size-5 text-blue-500 ml-8"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"
+              clipRule="evenodd"
+            />
+          </svg>
+
+          <label className="text-blue-500 text-sm">
+            Sign in to see your saved pages
+          </label>
+        </div>
+      )}
 
       {!openNavigation && (
         <div
@@ -66,15 +131,24 @@ const LeftNavigatioMenu: React.FC = () => {
                 <div className="text-sm text-gray-600 px-3 ">
                   Show traffic jams
                 </div>
+
                 <label className="relative inline-flex items-center cursor-pointer ml-14">
-                  <input type="checkbox" className="sr-only peer" />
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    onChange={handleToastError}
+                  />
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-500 dark:bg-gray-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                 </label>
               </div>
               <div className="flex flex-row">
                 <div className="text-sm text-gray-600 px-3 ">Show reports</div>
                 <label className="relative inline-flex items-center cursor-pointer ml-21">
-                  <input type="checkbox" className="sr-only peer" />
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    onChange={handleToastError}
+                  />
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-500 dark:bg-gray-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                 </label>
               </div>
@@ -87,7 +161,7 @@ const LeftNavigatioMenu: React.FC = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     try {
       await signInWithPopup(auth, googleAuthProvider);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
       </div>
       {showLogin && (
         <div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-gray-100 rounded-lg shadow-lg">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 bg-gray-100 rounded-lg shadow-lg z-50 ">
             <div
               className="absolute left-7 top-5 text-black hover:bg-white w-9 h-9 rounded-3xl flex items-center justify-center hover:cursor-pointer hover:shadow-lg"
               onClick={handleShowLogin}
