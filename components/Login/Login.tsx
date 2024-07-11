@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { auth, googleAuthProvider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
 
 const Login: React.FC = () => {
@@ -17,23 +16,14 @@ const Login: React.FC = () => {
     setShowHelp(!showHelp);
   };
 
-  //handle sign in with google
-  const handleSignInWithGoogle = async () => {
-    try {
-      await signInWithPopup(auth, googleAuthProvider);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div>
       <div>
         <button
           className={
             !showLogin
-              ? "absolute top-6 right-14 w-24 h-10 rounded-3xl bg-blue-500 shadow-lg text-white font-medium hover:bg-blue-600 hover:cursor-pointer"
-              : "absolute top-6 right-14 w-24 h-10 rounded-3xl bg-blue-500 shadow-lg text-white font-medium hover:bg-blue-600 hover:cursor-pointer cursor-not-allowed pointer-events-none"
+              ? "absolute top-6 right-14 w-24 h-10 rounded-3xl bg-blue-500 shadow-lg text-white font-medium hover:bg-blue-600 hover:cursor-pointer transition-all ease-in"
+              : "absolute top-6 right-14 w-24 h-10 rounded-3xl bg-blue-500 shadow-lg text-white font-medium hover:bg-blue-600 hover:cursor-pointer cursor-not-allowed pointer-events-none transition-all ease-in"
           }
           onClick={handleShowLogin}
         >
@@ -119,10 +109,7 @@ const Login: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-center mt-16">
-                  <button
-                    className="w-44 h-12 border border-gray-200 hover:bg-gray-200 shadow-md rounded-md"
-                    onClick={handleSignInWithGoogle}
-                  >
+                  <button className="w-44 h-12 border border-gray-200 hover:bg-gray-200 shadow-md rounded-md">
                     Sign in with Google
                   </button>
                 </div>

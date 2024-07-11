@@ -14,7 +14,7 @@ const Map = () => {
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
         center: [39.2083, -6.7924], // Coordinates for Dar es Salaam, Tanzania
-        zoom: 15,
+        zoom: 17,
       });
 
       return () => map.remove();

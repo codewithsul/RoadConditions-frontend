@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
+import Script from "next/script";
 
 const DynamicMap = dynamic(() => import("../components/Map/Map"), {
   ssr: false,
@@ -21,6 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
+      {/* <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAPS_API_KEY}&libraries=places`}
+        strategy="beforeInteractive"
+      /> */}
       <body className="relative h-full overflow-hidden">
         <div className="relative h-full">
           <div className="absolute inset-0 z-10">

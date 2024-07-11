@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.3",
     "@types/firebase": "^3.2.1",
     "firebase": "^10.12.3",
     "firebase-admin": "^12.2.0",

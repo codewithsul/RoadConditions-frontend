@@ -2,13 +2,61 @@
 import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { GoogleMap, useLoadScript, Autocomplete } from "@react-google-maps/api";
+
+type Library = "places";
+
+const libraries: Library[] = ["places"];
 
 const LeftNavigatioMenu: React.FC = () => {
   const [openNavigation, setOpenNavigation] = useState<boolean>(true);
   const [signInToShowPages, setSignInToShowPages] = useState<boolean>(false);
   const [Logged, setLogged] = useState<boolean>(false);
-  const [Origin, setOrigin] = useState<string>("");
-  const [Destination, setDestination] = useState<string>("");
+
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
+
+  const [Origin, setOrigin] = useState<google.maps.places.PlaceResult | null>(
+    null
+  );
+
+  const [Destination, setDestination] =
+    useState<google.maps.places.PlaceResult | null>(null);
+
+  console.log("origin:", Origin);
+  console.log("Destination:", Destination);
+
+  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocompleteInstance);
+  };
+
+  const onOriginChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setOrigin(place);
+      console.log("place : ", place);
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
+
+  const onDestinationChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setDestination(place);
+      console.log("place : ", place);
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  if (loadError) return <div>Error loading maps</div>;
+  if (!isLoaded) return <div>Loading Maps...</div>;
 
   console.log("origin:", Origin);
   console.log("destination:", Destination);
@@ -27,13 +75,13 @@ const LeftNavigatioMenu: React.FC = () => {
     }
   };
 
-  const handleOriginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOrigin(e.target.value);
-  };
+  // const handleOriginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setOrigin(e.target.value);
+  // };
 
-  const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDestination(e.target.value);
-  };
+  // const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setDestination(e.target.value);
+  // };
 
   return (
     <div>
@@ -54,27 +102,46 @@ const LeftNavigatioMenu: React.FC = () => {
           />
         </svg>
       </div>
-      <div className="w-96 h-52 rounded-lg bg-gray-100 shadow-lg absolute top-7 left-20 flex flex-col items-center">
+      <div className="w-96 h-56 rounded-lg bg-gray-100 shadow-lg absolute top-7 left-20 flex flex-col items-center">
         <label className="w-full flex justify-center font-bold text-lg mt-2">
           Route Directions
         </label>
-        <input
-          type="text"
-          className="w-10/12 h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border"
-          placeholder="Choose starting point"
-          onClick={handlesignInToShowPages}
-          onChange={handleOriginChange}
-        />
-        <input
-          type="text"
-          className="w-10/12 h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border"
-          placeholder="Choose destination"
-          onClick={handlesignInToShowPages}
-          onChange={handleDestinationChange}
-        />
+        <Autocomplete
+          onPlaceChanged={onOriginChanged}
+          onLoad={onLoad}
+          className="w-10/12"
+        >
+          <input
+            type="text"
+            placeholder="Choose starting point"
+            className="w-full h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
+            onClick={handlesignInToShowPages}
+          />
+        </Autocomplete>
+
+        <Autocomplete
+          onPlaceChanged={onDestinationChanged}
+          onLoad={onLoad}
+          className="w-10/12"
+        >
+          <input
+            type="text"
+            className="w-full h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
+            placeholder="Choose destination"
+            onClick={handlesignInToShowPages}
+          />
+        </Autocomplete>
+
+        <div className="w-full h-10 flex mt-3 justify-center">
+          <input
+            type="submit"
+            value="Search Route"
+            className="w-1/2 rounded-2xl bg-blue-500 text-white text-md h-10 hover:cursor-pointer hover:bg-blue-600 transition-all ease-in"
+          />
+        </div>
       </div>
       {signInToShowPages && (
-        <div className="w-96 h-14 rounded-lg bg-gray-100 shadow-lg absolute left-20 top-60 flex flex-row items-center gap-4">
+        <div className="w-96 h-14 rounded-lg bg-gray-100 shadow-lg absolute left-20 top-64 flex flex-row items-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
