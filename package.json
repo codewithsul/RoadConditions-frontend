@@ -2,6 +2,7 @@
   "name": "uni-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.3",
     "@types/firebase": "^3.2.1",
+    "axios": "^1.7.2",
     "firebase": "^10.12.3",
     "firebase-admin": "^12.2.0",
     "mapbox-gl": "^3.4.0",

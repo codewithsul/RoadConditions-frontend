@@ -1,39 +1,54 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { GoogleMap, useLoadScript, Autocomplete } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useLoadScript,
+  Autocomplete,
+  Libraries,
+} from "@react-google-maps/api";
+import { useMapLocations } from "../../Utils/contextProvider/ContextProvider";
 
-type Library = "places";
-
-const libraries: Library[] = ["places"];
+const libraries: Libraries = ["places"];
 
 const LeftNavigatioMenu: React.FC = () => {
   const [openNavigation, setOpenNavigation] = useState<boolean>(true);
   const [signInToShowPages, setSignInToShowPages] = useState<boolean>(false);
   const [Logged, setLogged] = useState<boolean>(false);
 
-  const [autocomplete, setAutocomplete] =
+  const [OriginAutocomplete, setOriginAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
 
-  const [Origin, setOrigin] = useState<google.maps.places.PlaceResult | null>(
-    null
-  );
+  const [DestinatioAutocomplete, setDestinationAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
 
-  const [Destination, setDestination] =
-    useState<google.maps.places.PlaceResult | null>(null);
+  const { locations, setLocations } = useMapLocations();
 
-  console.log("origin:", Origin);
-  console.log("Destination:", Destination);
+  const onOriginLoad = (
+    autocompleteInstance: google.maps.places.Autocomplete
+  ) => {
+    setOriginAutocomplete(autocompleteInstance);
+  };
 
-  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
-    setAutocomplete(autocompleteInstance);
+  const onDestinationLoad = (
+    autocompleteInstance: google.maps.places.Autocomplete
+  ) => {
+    setDestinationAutocomplete(autocompleteInstance);
   };
 
   const onOriginChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      setOrigin(place);
+    if (OriginAutocomplete !== null) {
+      const place = OriginAutocomplete.getPlace();
+
+      if (place.geometry !== undefined) {
+        setLocations((prev) => ({
+          ...prev,
+          OriginLat: place?.geometry?.location?.lat() ?? null,
+          OriginLng: place?.geometry?.location?.lng() ?? null,
+        }));
+      }
+
       console.log("place : ", place);
     } else {
       console.log("Autocomplete is not loaded yet!");
@@ -41,9 +56,17 @@ const LeftNavigatioMenu: React.FC = () => {
   };
 
   const onDestinationChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      setDestination(place);
+    if (DestinatioAutocomplete !== null) {
+      const place = DestinatioAutocomplete.getPlace();
+
+      if (place.geometry !== undefined) {
+        setLocations((prev) => ({
+          ...prev,
+          DestinationLat: place?.geometry?.location?.lat() ?? null,
+          DestinationLng: place?.geometry?.location?.lng() ?? null,
+        }));
+      }
+
       console.log("place : ", place);
     } else {
       console.log("Autocomplete is not loaded yet!");
@@ -58,9 +81,6 @@ const LeftNavigatioMenu: React.FC = () => {
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps...</div>;
 
-  console.log("origin:", Origin);
-  console.log("destination:", Destination);
-
   const handleNavigation = () => {
     setOpenNavigation(!openNavigation);
   };
@@ -74,14 +94,6 @@ const LeftNavigatioMenu: React.FC = () => {
       toast.error("please log in in to access this feature");
     }
   };
-
-  // const handleOriginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setOrigin(e.target.value);
-  // };
-
-  // const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setDestination(e.target.value);
-  // };
 
   return (
     <div>
@@ -103,30 +115,30 @@ const LeftNavigatioMenu: React.FC = () => {
         </svg>
       </div>
       <div className="w-96 h-56 rounded-lg bg-gray-100 shadow-lg absolute top-7 left-20 flex flex-col items-center">
-        <label className="w-full flex justify-center font-bold text-lg mt-2">
+        <label className="w-full flex justify-center font-bold text-lg mt-2 text-black">
           Route Directions
         </label>
         <Autocomplete
           onPlaceChanged={onOriginChanged}
-          onLoad={onLoad}
+          onLoad={onOriginLoad}
           className="w-10/12"
         >
           <input
             type="text"
             placeholder="Choose starting point"
-            className="w-full h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
+            className="w-full h-10 text-black bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
             onClick={handlesignInToShowPages}
           />
         </Autocomplete>
 
         <Autocomplete
           onPlaceChanged={onDestinationChanged}
-          onLoad={onLoad}
+          onLoad={onDestinationLoad}
           className="w-10/12"
         >
           <input
             type="text"
-            className="w-full h-10 bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
+            className="w-full h-10 text-black bg-gray-200 rounded-lg mt-4 px-3 outline-none focus:border-cyan-300 focus:border text-sm"
             placeholder="Choose destination"
             onClick={handlesignInToShowPages}
           />

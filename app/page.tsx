@@ -1,7 +1,8 @@
 import React from "react";
 import { ToastContainer } from "react-toastify";
-import LeftNavigatioMenu from "../components/LeftBurgerMenu/LeftNavigationMenu";
+
 import Login from "../components/Login/Login";
+import RegistrationForm from "../components/registrationForm/registrationForm";
 import "react-toastify/dist/ReactToastify.css";
 
 const page: React.FC = () => {
@@ -9,7 +10,7 @@ const page: React.FC = () => {
     <div className="text-black">
       <ToastContainer />
       <Login />
-      <LeftNavigatioMenu />
+      <RegistrationForm />
     </div>
   );
 };
