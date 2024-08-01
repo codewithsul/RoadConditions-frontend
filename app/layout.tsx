@@ -7,7 +7,7 @@ import {
   MapLocationsProvider,
 } from "@/Utils/contextProvider/ContextProvider";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../app/styles/globals.css";
 import dynamic from "next/dynamic";
 
 const DynamicMap = dynamic(() => import("../components/Map/Map"), {

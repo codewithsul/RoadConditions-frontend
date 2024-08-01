@@ -6,7 +6,7 @@ export const createUser = async (user: any) => {
     const response = await axiosInstance.post("/users/register", user);
     return response.data;
   } catch (error) {
-    console.error("Error creating user:", error);
+    throw error;
   }
 };
 
@@ -16,7 +16,7 @@ export const loginUser = async (user: any) => {
     const response = await axiosInstance.post("/users/login", user);
     return response.data;
   } catch (error) {
-    console.error("Error logging in user:", error);
+    throw error;
   }
 };
 
@@ -26,6 +26,16 @@ export const getUserById = async (id: number) => {
     const response = await axiosInstance.get(`/users/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error getting user by id:", error);
+    throw error;
+  }
+};
+
+//get users
+export const getUsers = async (users: any) => {
+  try {
+    const response = await axiosInstance.get("/users", users);
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };

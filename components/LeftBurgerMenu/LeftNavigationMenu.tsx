@@ -1,5 +1,5 @@
 "use client";
-import React, { use } from "react";
+import React, { use, useEffect } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import {
@@ -9,13 +9,28 @@ import {
   Libraries,
 } from "@react-google-maps/api";
 import { useMapLocations } from "../../Utils/contextProvider/ContextProvider";
+import { useRouter } from "next/navigation";
 
 const libraries: Libraries = ["places"];
 
 const LeftNavigatioMenu: React.FC = () => {
   const [openNavigation, setOpenNavigation] = useState<boolean>(true);
   const [signInToShowPages, setSignInToShowPages] = useState<boolean>(false);
-  const [Logged, setLogged] = useState<boolean>(false);
+  const [LoggedIn, setLoggedIn] = useState<boolean>(false);
+
+  const [token, setToken] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLoggedIn(true);
+      setToken(token);
+    } else {
+      setToken(null);
+    }
+  }, [token]);
 
   const [OriginAutocomplete, setOriginAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
@@ -89,10 +104,19 @@ const LeftNavigatioMenu: React.FC = () => {
     setSignInToShowPages(true);
   };
 
-  const handleToastError = () => {
-    if (Logged === false) {
-      toast.error("please log in in to access this feature");
+  // const handleToastError = () => {
+  //   if (!token) {
+  //     toast.error("please log in");
+  //   }
+  // };
+
+  const handleManageRoute = () => {
+    if (LoggedIn) {
+      router.push("/dashboard/manage");
+    } else {
+      toast.error("please log in");
     }
+    setOpenNavigation(!openNavigation);
   };
 
   return (
@@ -212,24 +236,22 @@ const LeftNavigatioMenu: React.FC = () => {
                 </div>
 
                 <label className="relative inline-flex items-center cursor-pointer ml-14">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    onChange={handleToastError}
-                  />
+                  <input type="checkbox" className="sr-only peer" />
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-500 dark:bg-gray-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                 </label>
               </div>
               <div className="flex flex-row">
                 <div className="text-sm text-gray-600 px-3 ">Show reports</div>
                 <label className="relative inline-flex items-center cursor-pointer ml-21">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    onChange={handleToastError}
-                  />
+                  <input type="checkbox" className="sr-only peer" />
                   <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-500 dark:bg-gray-400 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                 </label>
+              </div>
+              <div
+                className="text-gray-600 text-sm px-3 hover:cursor-pointer"
+                onClick={handleManageRoute}
+              >
+                Manage
               </div>
             </div>
             <ul className=" w-full border-b px-5 py-5 flex flex-col gap-3">
