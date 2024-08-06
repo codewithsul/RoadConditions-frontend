@@ -1,14 +1,14 @@
 import React from "react";
-import DashBoard from "../../components/dashBoard/DashBoard";
+import ReportsData from "../../components/ReportsData/ReportsData";
 import Login from "../../components/Login/Login";
-import { ToastContainer } from "react-toastify";
 
 const page: React.FC = () => {
   return (
     <div>
-      <ToastContainer />
-      {/* <DashBoard /> */}
-      <Login />
+      <div>
+        <Login />
+        <ReportsData />
+      </div>
     </div>
   );
 };

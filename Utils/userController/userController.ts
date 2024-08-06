@@ -39,3 +39,13 @@ export const getUsers = async (users: any) => {
     throw error;
   }
 };
+
+//delete user
+export const deleteUser = async (id: number) => {
+  try {
+    const response = await axiosInstance.delete(`/users/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

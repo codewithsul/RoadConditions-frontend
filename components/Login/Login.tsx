@@ -89,7 +89,7 @@ const Login: React.FC = () => {
     localStorage.removeItem("user");
     setToken(null);
 
-    router.push("/home");
+    router.push("/");
 
     toast.success("Logged out successfully");
   };

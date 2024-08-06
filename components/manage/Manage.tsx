@@ -1,10 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getUsers } from "../../Utils/userController/userController";
+import {
+  getUsers,
+  deleteUser,
+} from "../../Utils/userController/userController";
 import {
   createReport,
   getAllReports,
 } from "../../Utils/reportController/reportController";
+import {
+  registerRoad,
+  getRoadData,
+} from "../../Utils/roadController/roadController";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -15,6 +22,16 @@ interface User {
   email: string;
   phone: string;
   address: string;
+}
+
+interface Road {
+  id: string;
+  roadName: string;
+}
+
+interface RoadName {
+  id: string;
+  roadName: string;
 }
 
 interface Report {
@@ -49,11 +66,18 @@ const InitialUser: User[] = [
   { id: "", firstName: "", lastName: "", email: "", phone: "", address: "" },
 ];
 
+const initialRoad: Road = {
+  id: "",
+  roadName: "",
+};
+
 const Manage: React.FC = () => {
   const [users, setUsers] = useState<User[]>(InitialUser);
   const [loggedUser, setloggedUser] = useState<LoggedUser>(LoggedUser);
   const [RoadReports, setRoadReports] = useState<Report>(initialReport);
   const [reports, setReports] = useState<Report[]>([]);
+  const [Road, setRoad] = useState<Road>(initialRoad);
+  const [RoadName, setRoadNameData] = useState<Road[]>([]);
 
   console.log({ reports });
 
@@ -102,7 +126,7 @@ const Manage: React.FC = () => {
   };
 
   const handleBackHome = () => {
-    router.push("/home");
+    router.push("/dashboard");
   };
 
   //handle report input change
@@ -125,6 +149,12 @@ const Manage: React.FC = () => {
   ) => {
     const { name, value } = e.currentTarget;
     setRoadReports({ ...RoadReports, [name]: value });
+  };
+
+  //handle road input change
+  const handleRoadInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    setRoad({ ...Road, [name]: value });
   };
 
   //handle form submit
@@ -178,14 +208,77 @@ const Manage: React.FC = () => {
     }
   };
 
+  //handle get road data
+  const getRoadName = async () => {
+    try {
+      const response = await getRoadData();
+      console.log("RoadResponse:", response);
+
+      const roadData = response[0];
+
+      setRoadNameData(roadData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //handle delete user
+  const deleteUsers = async (id: number) => {
+    try {
+      const response = await deleteUser(id);
+      console.log("deleteResponse:", response);
+      router.push("/dashboard/manage");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log({ RoadName });
+
+  //handle getRoadReport when page refreshes
+  useEffect(() => {
+    getRoadName();
+  }, [registerRoad]);
+
   //handle getReports when page refreshes
   useEffect(() => {
     getReports();
   }, [createReport]);
 
+  //handle road form
+  const handleRegisterRoad = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const road = {
+      roadName: Road.roadName,
+    };
+
+    if (!road.roadName) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    await registerRoad(road)
+      .then(() => {
+        setRoad(initialRoad);
+      })
+
+      .catch((error) => {
+        if (
+          error.response &&
+          error.response.status === 400 &&
+          error.response.data === "Failed to register road"
+        ) {
+          toast.error("Failed to register road");
+          return;
+        }
+      });
+    toast.success("Road registered successfully");
+  };
+
   return (
     <div>
-      <div className="w-full h-screen bg-neutral-200">
+      <div className="w-full h-screen bg-white">
         <div className="flex absolute left-14 top-12 bg-gray-100 shadow-sm rounded-lg h-1/2 w-96">
           <ul className="flex flex-col gap-2 px-4 py-7 text-gray-600 text-sm">
             <li
@@ -241,7 +334,7 @@ const Manage: React.FC = () => {
                       <th className="w-1/6 text-center">Last Name</th>
                       <th className="w-1/6 text-center">Email</th>
                       <th className="w-1/6 text-center">Address</th>
-                      <th className="w-1/6 text-center"></th>
+                      <th className="w-1/6 text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody className="border-b border-gray-200 py-2">
@@ -265,7 +358,10 @@ const Manage: React.FC = () => {
                               {user.address}
                             </td>
                             <td className="w-1/6 text-center">
-                              <button className=" text-black rounded-md py-1 px-2 hover:cursor-pointer">
+                              <button
+                                className=" text-black rounded-md py-1 px-2 hover:cursor-pointer"
+                                onClick={() => deleteUsers(user.id)}
+                              >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
@@ -277,7 +373,7 @@ const Manage: React.FC = () => {
                                   <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                   />
                                 </svg>
                               </button>
@@ -298,7 +394,7 @@ const Manage: React.FC = () => {
                 <div className="absolute flex mt-2">
                   <button
                     type="submit"
-                    className="w-32 h-11 rounded-3xl bg-white shadow-sm text-gray-600 hover:bg-gray-200 hover:cursor-pointer transition-all ease-in"
+                    className="w-32 h-9 border border-blue-200 text-white rounded-md bg-blue-500 shadow-sm hover:text-gray-600 hover:bg-blue-200 hover:cursor-pointer transition-all ease-in"
                   >
                     Submit report
                   </button>
@@ -311,8 +407,9 @@ const Manage: React.FC = () => {
                           <input
                             type="text"
                             name="reportName"
+                            value={RoadReports.reportName}
                             required
-                            className="flex w-72 rounded-md h-11 px-4 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
+                            className="flex w-72 rounded-md h-9 px-4 border border-blue-200 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
                             placeholder="Report name"
                             onChange={handleReportInputChange}
                           />
@@ -320,8 +417,9 @@ const Manage: React.FC = () => {
                         <div className="relative w-28">
                           <select
                             name="reportType"
+                            value={RoadReports.reportType}
                             required
-                            className="appearance-none h-11 px-4 pr-8 bg-gray-100 w-full outline-none rounded-md"
+                            className="appearance-none h-9 px-4 pr-8 bg-gray-100 w-full outline-none rounded-md border border-blue-200"
                             onChange={handleReportSelectChange}
                           >
                             <option value="">Priority</option>
@@ -336,7 +434,7 @@ const Manage: React.FC = () => {
                               viewBox="0 0 24 24"
                               strokeWidth="1.5"
                               stroke="currentColor"
-                              className="size-4 absolute right-7 top-4"
+                              className="size-4 absolute right-7 top-3"
                             >
                               <path
                                 strokeLinecap="round"
@@ -350,8 +448,9 @@ const Manage: React.FC = () => {
                           <input
                             type="date"
                             name="reportDate"
+                            value={RoadReports.reportDate}
                             required
-                            className="flex w-72 rounded-md h-11 px-4 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
+                            className="flex w-72 rounded-md h-9 border border-blue-200 px-4 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
                             onChange={handleReportInputChange}
                           />
                         </div>
@@ -359,9 +458,10 @@ const Manage: React.FC = () => {
                           <textarea
                             name="reportDescription"
                             required
+                            value={RoadReports.reportDescription}
                             onChange={handleReportTextAreaChange}
                             placeholder="Report description"
-                            className="flex w-96 h-24 rounded-md px-5 py-7 outline-none bg-gray-100 focus:focus:border-blue-500 transition-all ease-in"
+                            className="flex w-96 h-24 rounded-md px-5 border border-blue-200 py-7 outline-none bg-gray-100 focus:focus:border-blue-500 transition-all ease-in"
                           />
                         </div>
                       </div>
@@ -416,6 +516,87 @@ const Manage: React.FC = () => {
               </form>
             </div>
           ) : null}
+          {switches.road === true ? (
+            <div>
+              <h2 className="font-bold text-lg text-black">Roads</h2>
+
+              <form
+                onSubmit={(e) => {
+                  handleRegisterRoad(e);
+                }}
+              >
+                <div className="flex flex-row gap-0 mt-11">
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-row gap-2">
+                      <div className="flex flex-col gap-2 w-1/3 bg-gray-200 rounded-lg h-72 mt-4 px-4 py-5">
+                        <input
+                          type="text"
+                          name="roadName"
+                          value={Road.roadName}
+                          required
+                          className="flex w-72 rounded-md h-9 px-4 border border-blue-200 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
+                          placeholder="Road name"
+                          onChange={handleRoadInputChange}
+                        />
+                        <div className="flex mt-2">
+                          <button
+                            type="submit"
+                            className="w-32 h-9 rounded-md border text-white border-blue-200 bg-blue-500 font-md  shadow-sm hover:text-gray-600 hover:bg-blue-200 hover:cursor-pointer transition-all ease-in"
+                          >
+                            Register road
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-baseline absolute w-44 h-14 top-14 left-80 ">
+                        <h2 className="absolute bottom-0 left-9 font-bold text-lg text-black ">
+                          Road lists
+                        </h2>
+                      </div>
+                      <div className="flex flex-col relative w-2/3 bg-gray-200 rounded-lg h-72 mt-4 overflow-y-auto px-4 py-5">
+                        <div>
+                          <input
+                            type="text"
+                            name="RoadSearch"
+                            className="flex w-full rounded-md h-9 px-4 border border-gray-300 bg-gray-100 outline-none focus:border focus:border-blue-500 transition-all ease-in"
+                            placeholder="Search road"
+                          />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="size-7 absolute right-7 top-6 text-gray-500 hover:cursor-pointer hover:text-blue-500 transition-all ease-in"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="py-4 overflow-y-auto px-4">
+                          {RoadName.map((road: any, index) => (
+                            <ul
+                              key={road.id}
+                              className={`flex flex-row gap-2 py-1 items-center hover:cursor-pointer border ${
+                                index === RoadName.length - 1
+                                  ? "border-b border-gray-300"
+                                  : "border-b-0 border-gray-300"
+                              }`}
+                            >
+                              <li className="px-4">{road.road_id}.</li>
+                              <li> {road.road_name}</li>
+                            </ul>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          ) : null}
         </div>
         <div className="flex absolute bottom-12 right-12 w-2/3 h-80 bg-gray-100 shadow-sm rounded-lg text-gray-600 py-7 px-6 text-sm">
           <div className="flex flex-col gap-2">
@@ -426,7 +607,7 @@ const Manage: React.FC = () => {
             </div>
           </div>
           <div className="flex absolute right-32">
-            <div className="flex flex-row w-32 h-11 rounded-3xl bg-white shadow-sm text-gray-600 hover:bg-gray-200 hover:cursor-pointer transition-all ease-in">
+            <div className="flex flex-row w-32 h-11 rounded-3xl border border-blue-200 bg-white shadow-sm text-gray-600 hover:bg-gray-200 hover:cursor-pointer transition-all ease-in">
               <button className="absolute left-7 top-3">Today</button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

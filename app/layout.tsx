@@ -1,5 +1,4 @@
 "use client";
-import { useState, useContext } from "react";
 import LeftNavigatioMenu from "../components/LeftBurgerMenu/LeftNavigationMenu";
 import {
   MapLocations,
@@ -34,6 +33,7 @@ export default function RootLayout({
           <div
             className={`absolute inset-0 z-20 pointer-events-none ${inter.className}`}
           >
+            <div></div>
             <div className="pointer-events-auto">{children}</div>
           </div>
         </div>

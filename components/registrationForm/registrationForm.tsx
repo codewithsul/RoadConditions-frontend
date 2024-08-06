@@ -78,7 +78,7 @@ const RegistrationForm: React.FC = () => {
 
     await createUser(user)
       .then(() => {
-        closeShowRegister();
+        setShowRegister(!showRegister);
         setRegistration(InitialRegistration);
       })
       .catch((error) => {

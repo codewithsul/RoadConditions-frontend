@@ -104,14 +104,8 @@ const LeftNavigatioMenu: React.FC = () => {
     setSignInToShowPages(true);
   };
 
-  // const handleToastError = () => {
-  //   if (!token) {
-  //     toast.error("please log in");
-  //   }
-  // };
-
   const handleManageRoute = () => {
-    if (LoggedIn) {
+    if (token) {
       router.push("/dashboard/manage");
     } else {
       toast.error("please log in");
@@ -140,7 +134,7 @@ const LeftNavigatioMenu: React.FC = () => {
       </div>
       <div className="w-96 h-56 rounded-lg bg-gray-100 shadow-lg absolute top-7 left-20 flex flex-col items-center">
         <label className="w-full flex justify-center font-bold text-lg mt-2 text-black">
-          Route Directions
+          Best Route Directions
         </label>
         <Autocomplete
           onPlaceChanged={onOriginChanged}
@@ -168,15 +162,18 @@ const LeftNavigatioMenu: React.FC = () => {
           />
         </Autocomplete>
 
-        <div className="w-full h-10 flex mt-3 justify-center">
-          <input
+        <div className="w-full h-10 flex mt-7 justify-center">
+          <p className="text-blue-500 text-sm">
+            Set your origin and destination
+          </p>
+          {/* <input
             type="submit"
             value="Search Route"
             className="w-1/2 rounded-2xl bg-blue-500 text-white text-md h-10 hover:cursor-pointer hover:bg-blue-600 transition-all ease-in"
-          />
+          /> */}
         </div>
       </div>
-      {signInToShowPages && (
+      {/* {signInToShowPages && (
         <div className="w-96 h-14 rounded-lg bg-gray-100 shadow-lg absolute left-20 top-64 flex flex-row items-center gap-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +192,7 @@ const LeftNavigatioMenu: React.FC = () => {
             Sign in to see your saved pages
           </label>
         </div>
-      )}
+      )} */}
 
       {!openNavigation && (
         <div
